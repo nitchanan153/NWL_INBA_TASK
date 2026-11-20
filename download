@@ -1,9 +1,0 @@
-# Vercel CLI
-.vercel
-
-# ไฟล์สำรองข้อมูลงาน (.json) ห้ามขึ้น repo/เว็บ — ลิงก์ .vercel.app เปิดได้ทุกคน
-*.json
-!vercel.json
-
-.DS_Store
-Thumbs.db

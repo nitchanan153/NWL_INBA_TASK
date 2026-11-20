@@ -3,16 +3,16 @@
  * - ฟอนต์ Google: ใช้ของในแคชก่อน (ไฟล์ฟอนต์ไม่เปลี่ยน)
  * - ข้อมูลงานอยู่ใน LocalStorage ไม่ได้ผ่านไฟล์นี้
  */
-const CACHE = 'nwl-task-v3';
+const CACHE = 'nwl-task-v3-1';
 const SHELL = [
   './',
-  './css/style.css',
-  './js/app.js',
+  './style.css',
+  './app.js',
   './manifest.webmanifest',
   './favicon.ico',
-  './icons/icon.svg',
-  './icons/icon-192.png',
-  './icons/icon-512.png'
+  './icon.svg',
+  './icon-192.png',
+  './icon-512.png'
 ];
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 
