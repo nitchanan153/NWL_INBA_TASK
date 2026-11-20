@@ -13,13 +13,15 @@
 
 ## โครงสร้างไฟล์
 
+ทุกไฟล์อยู่ชั้นเดียวกันหมด ไม่มีโฟลเดอร์ย่อย อัปโหลดขึ้น GitHub แบบเลือกไฟล์ทั้งหมดได้เลย
+
 ```
 index.html              หน้าเว็บ
-css/style.css           หน้าตาทั้งหมด
-js/app.js               การทำงานทั้งหมด
+style.css               หน้าตาทั้งหมด
+app.js                  การทำงานทั้งหมด
 sw.js                   service worker (ทำให้เปิดได้แม้ออฟไลน์)
 manifest.webmanifest    ข้อมูลสำหรับติดตั้งเป็นแอป
-icons/  favicon.ico     ไอคอน
+icon*.png  icon.svg  apple-touch-icon.png  favicon.ico   ไอคอน
 vercel.json             ตั้งค่า Vercel (header ความปลอดภัย, กัน search engine เก็บหน้าเว็บ)
 ```
 
@@ -27,7 +29,7 @@ vercel.json             ตั้งค่า Vercel (header ความปล�
 
 ### วิธีที่ 1: ผ่าน GitHub (แนะนำ: แก้ไฟล์แล้ว push เว็บจะอัปเดตเอง)
 
-1. สร้าง repository ใหม่บน GitHub (ตั้งเป็น Private ก็ได้) แล้วอัปโหลดไฟล์ทั้งหมดในโฟลเดอร์นี้ โดยให้ `index.html` อยู่ชั้นบนสุดของ repo
+1. สร้าง repository ใหม่บน GitHub (ตั้งเป็น Private ก็ได้) → **Add file → Upload files** → เลือกไฟล์ทั้งหมดในโฟลเดอร์นี้ → **Commit changes** (ไฟล์ทุกตัวต้องอยู่ชั้นบนสุดของ repo ไม่อยู่ในโฟลเดอร์ย่อย)
 2. เข้า [vercel.com](https://vercel.com) → **Add New… → Project** → เลือก **Import** repo นั้น
 3. **Framework Preset: Other** ไม่ต้องใส่ Build Command หรือ Output Directory → กด **Deploy**
 4. จะได้ลิงก์ประมาณ `https://ชื่อโปรเจกต์.vercel.app`
@@ -50,7 +52,7 @@ vercel --prod   # ขึ้นเวอร์ชันจริง
 
 ถ้าไม่มีไฟล์จากเวอร์ชันเดิม ใช้ `NWL_Task_data_from_xlsx.json` แทนได้ ไฟล์นี้คือข้อมูลจาก NWL_Task.xlsx (ก.ย.–พ.ย. 2569) ที่แปลงเป็นรูปแบบใหม่แล้ว
 
-> ⚠️ อย่าเอาไฟล์ข้อมูล `.json` ขึ้น repo หรือขึ้นเว็บ เพราะลิงก์ `.vercel.app` ใครมีลิงก์ก็เปิดได้ ตัวเว็บในโฟลเดอร์นี้ไม่มีข้อมูลงานฝังอยู่ (`.gitignore` กันไฟล์ `.json` ไว้ให้แล้ว ยกเว้น `vercel.json`)
+> ⚠️ อย่าเอาไฟล์ข้อมูล `.json` ขึ้น repo หรือขึ้นเว็บ เพราะลิงก์ `.vercel.app` ใครมีลิงก์ก็เปิดได้ ตัวเว็บในโฟลเดอร์นี้ไม่มีข้อมูลงานฝังอยู่ (ไฟล์ `.json` ไฟล์เดียวที่ต้องอยู่ใน repo คือ `vercel.json`)
 
 ## ติดตั้งเป็นแอป
 
