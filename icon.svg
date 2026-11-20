@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#2447A6"/>
+  <g>
+  <clipPath id="sheet"><rect x="104" y="120" width="304" height="272" rx="32"/></clipPath>
+  <g clip-path="url(#sheet)">
+    <rect x="104" y="120" width="304" height="272" fill="#F3F7F6"/>
+    <rect x="104" y="120" width="304" height="62" fill="#E5EBFA"/>
+    <path d="M205 182V392M307 182V392M104 182H408M104 287H408" stroke="#C9D6D5" stroke-width="6"/>
+  </g>
+  <path d="M170 276 236 338 354 206" fill="none" stroke="#1C7448" stroke-width="42" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

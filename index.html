@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NWL Task · บันทึกงานรายวัน</title>
+<meta name="description" content="บันทึกงานรายวัน: สถานะงาน การมาทำงาน งานมอบหมาย และงานค้าง">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#F3F7F6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0D1315" media="(prefers-color-scheme: dark)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="NWL Task">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@500;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Thai+Looped:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<script src="js/app.js" defer></script>
+</head>
+<body>
+<div id="app">
+  <!-- ส่วนหัว: ชื่อเดือน + ปุ่มเปลี่ยนเดือน + เครื่องมือ -->
+  <header class="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+    <div class="flex flex-col gap-1.5 min-w-0">
+      <div class="eyebrow">NWL Task · บันทึกงานรายวัน</div>
+      <div class="flex items-center gap-2">
+        <button type="button" id="prev-month" class="iconbtn" aria-label="เดือนก่อนหน้า">‹</button>
+        <h1 class="month-title" id="month-title">—</h1>
+        <button type="button" id="next-month" class="iconbtn" aria-label="เดือนถัดไป">›</button>
+        <span class="mono text-muted text-xs ml-1" id="month-sub"></span>
+      </div>
+    </div>
+    <div class="flex flex-wrap items-center gap-2">
+      <label for="month-pick" class="sr-only">เลือกเดือน</label>
+      <input type="month" id="month-pick" class="field">
+      <button type="button" id="go-today" class="btn">วันนี้</button>
+      <button type="button" id="open-backlog" class="btn">งานค้าง <span class="badge" id="backlog-badge">0</span></button>
+      <button type="button" id="open-holidays" class="btn">วันหยุด</button>
+      <button type="button" id="open-data" class="btn">ข้อมูล</button>
+      <button type="button" id="install-app" class="btn primary" hidden>ติดตั้งแอป</button>
+    </div>
+  </header>
+
+  <!-- แถบสรุปทั้งเดือน -->
+  <section class="flex flex-wrap items-center justify-between gap-x-6 gap-y-2" aria-label="สรุปเดือน">
+    <div class="flex flex-wrap items-center gap-2" id="month-stats"></div>
+    <div class="save flex items-center gap-2 text-xs text-muted" id="save-status" data-state="saved" aria-live="polite">
+      <span class="save-dot"></span><span id="save-text">บันทึกอัตโนมัติ</span>
+    </div>
+  </section>
+
+  <!-- แสดงเมื่อเบราว์เซอร์นี้ยังไม่มีข้อมูลเลย -->
+  <div class="empty-hint" id="empty-hint" hidden>
+    <span>ยังไม่มีข้อมูลในเบราว์เซอร์นี้ — พิมพ์ลงตารางได้เลย หรือนำเข้าไฟล์สำรอง .json จากเวอร์ชันเดิม</span>
+    <button type="button" class="btn sm" id="hint-import">นำเข้าไฟล์ .json</button>
+  </div>
+
+  <div class="grid-wrap" id="grid-wrap">
+    <table class="tt" id="grid" aria-label="ตารางงานรายวัน"></table>
+  </div>
+
+  <p class="text-xs text-muted leading-relaxed">
+    เลือก "การมาทำงาน" (ออฟฟิศ / WFA / ลา) ที่แถวบนสุดของแต่ละวัน และเลือก "สถานะงาน" (✓ ◐ ✗ ⊘) แยกในแต่ละ Task ·
+    งาน ◐ หรือ ✗ กด "↪ ทำต่อ" เพื่อยกไปวันทำงานถัดไป · ยกผิดวัน: ชี้ที่ช่องปลายทางแล้วกด "ย้ายวัน" หรือ "× ลบ" (หรือ "เลิกยก" ที่ช่องต้นทาง) ·
+    งานมอบหมายพิมพ์ในแถว Remark แล้วกด Enter, กด "→ ลง Task" เพื่อส่งเข้าช่อง Task ·
+    เมื่อ Task ที่มาจากงานมอบหมายขึ้น ✓ งานมอบหมายจะถูกติ๊กให้เอง · ดูทุกอย่างที่ยังเปิดอยู่ได้ที่ปุ่ม "งานค้าง" ·
+    ข้อมูลบันทึกในเบราว์เซอร์นี้อัตโนมัติ (ไม่ได้ส่งขึ้นเซิร์ฟเวอร์)
+  </p>
+</div>
+
+<!-- แผงงานค้าง -->
+<dialog class="drawer" id="dlg-backlog" aria-labelledby="bl-title">
+  <div class="dlg-head">
+    <div class="flex flex-col gap-1">
+      <h2 id="bl-title">งานค้าง</h2>
+      <p class="text-xs text-muted" id="bl-sub"></p>
+    </div>
+    <button type="button" class="iconbtn" data-close aria-label="ปิด">×</button>
+  </div>
+  <div class="dlg-body" id="bl-body"></div>
+</dialog>
+
+<!-- หน้าต่างจัดการวันหยุด -->
+<dialog class="panel" id="dlg-holidays" aria-labelledby="hol-title">
+  <div class="dlg-head">
+    <h2 id="hol-title">วันหยุด (ไม่นับเป็นวันทำงาน)</h2>
+    <button type="button" class="iconbtn" data-close aria-label="ปิด">×</button>
+  </div>
+  <div class="dlg-body">
+    <p class="dlg-note">ใส่วันหยุดนักขัตฤกษ์/วันหยุดบริษัท ตารางงานจะข้ามวันเหล่านี้ให้อัตโนมัติ (รวมถึงตอนยกงานไปวันถัดไป)</p>
+    <ul id="hol-list"></ul>
+    <form id="hol-form" class="flex flex-wrap items-center gap-2">
+      <label for="hol-date" class="sr-only">วันที่</label>
+      <input type="date" id="hol-date" class="field" required>
+      <label for="hol-name" class="sr-only">ชื่อวันหยุด</label>
+      <input type="text" id="hol-name" class="field flex-1 min-w-140" style="font-family: var(--font-body)" placeholder="ชื่อวันหยุด">
+      <button type="submit" class="btn primary">เพิ่มวันหยุด</button>
+    </form>
+  </div>
+</dialog>
+
+<!-- หน้าต่างข้อมูล / สำรอง -->
+<dialog class="panel" id="dlg-data" aria-labelledby="data-title">
+  <div class="dlg-head">
+    <h2 id="data-title">ข้อมูลและการสำรอง</h2>
+    <button type="button" class="iconbtn" data-close aria-label="ปิด">×</button>
+  </div>
+  <div class="dlg-body">
+    <p class="dlg-note">ข้อมูลทั้งหมดเก็บใน LocalStorage ของเบราว์เซอร์นี้เท่านั้น ไม่ได้อยู่บนเซิร์ฟเวอร์ ถ้าล้างประวัติเบราว์เซอร์หรือเปิดจากเครื่องอื่น ข้อมูลจะไม่ตามไป ควรสำรองเป็นไฟล์ .json เป็นระยะ</p>
+    <div class="group">
+      <h3>สำรองข้อมูล</h3>
+      <div class="flex flex-wrap gap-2">
+        <button type="button" class="btn" id="export-file">ดาวน์โหลดไฟล์ .json</button>
+        <button type="button" class="btn" id="export-copy">คัดลอก JSON</button>
+      </div>
+    </div>
+    <div class="group">
+      <h3>นำเข้าข้อมูลสำรอง</h3>
+      <p>เลือกไฟล์ .json ที่เคยสำรองไว้ ใช้ไฟล์จากเวอร์ชันก่อนได้ — ช่อง Task ที่เคยใส่ ลา / WFA จะถูกย้ายไปแถว "การมาทำงาน" ให้อัตโนมัติ · ข้อมูลปัจจุบันจะถูกแทนที่ทั้งหมด</p>
+      <label for="import-file" class="sr-only">ไฟล์สำรอง</label>
+      <input type="file" id="import-file" accept=".json,application/json" class="text-sm">
+    </div>
+    <div class="group">
+      <h3>ล้างข้อมูล</h3>
+      <p>ลบบันทึกงานทั้งหมดในเบราว์เซอร์นี้ (วันหยุดยังอยู่) ควรสำรองก่อน</p>
+      <div class="flex flex-wrap gap-2">
+        <button type="button" class="btn danger" id="clear-all" data-label="ล้างบันทึกงานทั้งหมด">ล้างบันทึกงานทั้งหมด</button>
+      </div>
+    </div>
+    <p class="text-sm" id="data-msg" aria-live="polite"></p>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" hidden><span id="toast-text"></span><span id="toast-actions"></span></div>
+</body>
+</html>
